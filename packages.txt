@@ -1,7 +1,9 @@
-sudo apt-get update
-sudo apt-get install build-essential
-sudo apt-get install pkg-config
-sudo apt-get install libmariadb-dev-compat
-sudo apt-get install libmariadb-dev
+apt-get update
+apt-get install build-essential
+apt-get install pkg-config
+apt-get install libmariadb-dev-compat
+apt-get install libmariadb-dev
 pkg-config --modversion mysqlclient
+
+
 
