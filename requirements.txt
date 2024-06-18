@@ -46,7 +46,7 @@ jedi==0.19.1
 Jinja2==3.1.2
 jsonschema==4.21.1
 jsonschema-specifications==2023.12.1
-keras==2.9.0
+keras
 Keras-Preprocessing==1.1.2
 kiwisolver==1.4.4
 lazy_loader==0.3
