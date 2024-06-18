@@ -1,8 +1,8 @@
-update
-install build-essential
-install pkg-config
-install libmariadb-dev-compat
-install libmariadb-dev
+build-essential
+pkg-config
+libmariadb-dev-compat
+libmariadb-dev
+
 
 
 
