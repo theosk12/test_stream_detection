@@ -3,7 +3,6 @@ pkg-config
 libmariadb-dev-compat
 libmariadb-dev
 --upgrade pip
-wheel
 -y build-essential libjpeg-dev zlib1g-dev libpng-dev libwebp-dev libtiff-dev libopenjp2-7-dev libavcodec-dev libavformat-dev libswscale-dev
 -y libhdf5-dev
 
