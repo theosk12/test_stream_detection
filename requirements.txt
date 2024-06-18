@@ -75,7 +75,7 @@ php==1.2.1
 Pillow==9.0.1
 platformdirs==2.5.2
 prompt-toolkit==3.0.43
-protobuf==4.21.1
+protobuf==4.22
 psutil==5.9.5
 pure-eval==0.2.2
 py-cpuinfo==9.0.0
