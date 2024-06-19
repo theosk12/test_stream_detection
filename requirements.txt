@@ -70,6 +70,7 @@ opencv-python-headless==4.7.0.72
 opt-einsum==3.3.0
 packaging==21.3
 pandas==2.0.2
+python==3.10.5
 parso==0.8.3
 php==1.2.1
 Pillow==9.0.1
