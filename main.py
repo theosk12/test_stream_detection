@@ -118,7 +118,7 @@ def page_accueil():
  
 
     # Charger les images
-    image1 = Image.open("models/th1.png")
+    image1 = Image.open("models/th1.jpg")
     image2 = Image.open("models/th2.png")
     image3 = Image.open("models/th3.png")
     image4 = Image.open("models/th4.png")
@@ -446,7 +446,6 @@ def page_demo_video():
 
 
 
-
 # Définition de la fonction d'enregistrement des détections
 def insert_webcam_detection(image_name, recognized_text):
     session = SessionLocal()
@@ -487,17 +486,38 @@ def detect_and_recognize_license_plates(image, plate_model):
 
     return None  # Aucune plaque détectée
 
-# Définir la page
-def page_demo_webcam():
+
+
+# Fonction JavaScript pour accéder à la webcam du navigateur
+def webcam_js():
     st.markdown(
         """
-        <h2 style='background-color: #6495ED; color: white; padding: 10px;'>
-            Détection de véhicules et de plaques d'immatriculation en temps réel avec une webcam
-        </h2>
+        <script>
+        async function getWebcam() {
+            const video = document.createElement('video');
+            video.setAttribute('autoplay', '');
+            video.setAttribute('muted', '');
+            video.setAttribute('playsinline', '');
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+
+            // Ajouter la vidéo dans le document
+            const videoContainer = document.getElementById('video-container');
+            videoContainer.innerHTML = '';
+            videoContainer.appendChild(video);
+        }
+        getWebcam();
+        </script>
         """,
         unsafe_allow_html=True
     )
 
+# Définir la page
+def page_demo_webcam():
+    st.title("Webcam en temps réel")
+    st.markdown("<div id='video-container'></div>", unsafe_allow_html=True)
+    webcam_js()
+    
     # Variables de contrôle pour le démarrage et l'arrêt de la webcam
     if 'run' not in st.session_state:
         st.session_state.run = False
@@ -670,7 +690,7 @@ if __name__ == "__main__":
        
     st.sidebar.title("Menu")
    
-    menu_options = ["Accueil", "Démo Image", "Démo Vidéo", "Démo Webcam", "Historiques"]
+    menu_options = ["Accueil", "Démo Image", "Démo Vidéo","Démo Webcam", "Historiques"]
     selected_menu = st.sidebar.radio("Sélectionnez une option :", menu_options)
 
     if selected_menu == "Accueil":
