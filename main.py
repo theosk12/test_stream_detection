@@ -444,6 +444,8 @@ def page_demo_video():
 
 
 
+#******************************************************************************************
+#*******************************start webcam ****************************************************
 
 
 # Définition de la fonction d'enregistrement des détections
@@ -459,183 +461,172 @@ def insert_webcam_detection(image_name, recognized_text):
     session.close()
 
 # Définition de la fonction de détection et de reconnaissance des plaques d'immatriculation
-def detect_and_recognize_license_plates(image, plate_model):
-    plate_results = plate_model(image)[0]
-    threshold = 0.5
-    results = {}
+# def detect_and_recognize_license_plates(image, plate_model):
+#     plate_results = plate_model(image)[0]
+#     threshold = 0.5
+#     results = {}
 
-    for result in plate_results.boxes.data.tolist():
-        x1, y1, x2, y2, score, class_id = result
-        if score > threshold:
-            license_plate_crop = image[int(y1):int(y2), int(x1): int(x2)]
-            license_plate_crop_gray = cv2.cvtColor(license_plate_crop, cv2.COLOR_BGR2GRAY)
-            _, license_plate_crop_thresh = cv2.threshold(license_plate_crop_gray, 64, 255,
-                                                                 cv2.THRESH_BINARY_INV)
-            reader = easyocr.Reader(['en'])
-            result = reader.readtext(license_plate_crop)
-            concatenated_text = ' '.join([res[1] for res in result])
-            if len(concatenated_text) >= 8:  # Vérifier la longueur du texte reconnu
-                results = {
-                    'license_plate': {
-                        'bbox': [x1, y1, x2, y2],
-                        'text': concatenated_text,
-                        'bbox_score': score,
-                    }
-                }
-                return results  # Quitter la fonction dès qu'une plaque est détectée
+#     for result in plate_results.boxes.data.tolist():
+#         x1, y1, x2, y2, score, class_id = result
+#         if score > threshold:
+#             license_plate_crop = image[int(y1):int(y2), int(x1): int(x2)]
+#             license_plate_crop_gray = cv2.cvtColor(license_plate_crop, cv2.COLOR_BGR2GRAY)
+#             _, license_plate_crop_thresh = cv2.threshold(license_plate_crop_gray, 64, 255,
+#                                                              cv2.THRESH_BINARY_INV)
+#             reader = easyocr.Reader(['en'])
+#             result = reader.readtext(license_plate_crop)
+#             concatenated_text = ' '.join([res[1] for res in result])
+#             if len(concatenated_text) >= 8:  # Vérifier la longueur du texte reconnu
+#                 results = {
+#                     'license_plate': {
+#                         'bbox': [x1, y1, x2, y2],
+#                         'text': concatenated_text,
+#                         'bbox_score': score,
+#                     }
+#                 }
+#                 return results  # Quitter la fonction dès qu'une plaque est détectée
 
-    return None  # Aucune plaque détectée
+#     return None  # Aucune plaque détectée
 
 
 
 # Fonction JavaScript pour accéder à la webcam du navigateur
-def webcam_js():
-    st.markdown(
-        """
-        <script>
-        async function getWebcam() {
-            const video = document.createElement('video');
-            video.setAttribute('autoplay', '');
-            video.setAttribute('muted', '');
-            video.setAttribute('playsinline', '');
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            video.srcObject = stream;
+# def webcam_js():
+#     st.markdown(
+#         """
+#         <script>
+#         async function getWebcam() {
+#             const video = document.createElement('video');
+#             video.setAttribute('autoplay', '');
+#             video.setAttribute('muted', '');
+#             video.setAttribute('playsinline', '');
+#             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+#             video.srcObject = stream;
 
-            // Ajouter la vidéo dans le document
-            const videoContainer = document.getElementById('video-container');
-            videoContainer.innerHTML = '';
-            videoContainer.appendChild(video);
-        }
-        getWebcam();
-        </script>
-        """,
-        unsafe_allow_html=True
-    )
+#             // Ajouter la vidéo dans le document
+#             const videoContainer = document.getElementById('video-container');
+#             videoContainer.innerHTML = '';
+#             videoContainer.appendChild(video);
+#         }
+#         getWebcam();
+#         </script>
+#         """,
+#         unsafe_allow_html=True
+#     )
 
 # Définir la page
-def page_demo_webcam():
-    st.title("Webcam en temps réel")
-    st.markdown("<div id='video-container'></div>", unsafe_allow_html=True)
-    webcam_js()
+# def page_demo_webcam():
+#     st.title("Webcam en temps réel")
+#     st.markdown("<div id='video-container'></div>", unsafe_allow_html=True)
+#     webcam_js()
     
-    # Variables de contrôle pour le démarrage et l'arrêt de la webcam
-    if 'run' not in st.session_state:
-        st.session_state.run = False
+#     # Variables de contrôle pour le démarrage et l'arrêt de la webcam
+#     if 'run' not in st.session_state:
+#         st.session_state.run = False
 
-    def start():
-        st.session_state.run = True
+#     def start():
+#         st.session_state.run = True
 
-    def stop():
-        st.session_state.run = False
+#     def stop():
+#         st.session_state.run = False
 
-    # Boutons Start et Stop
-    st.button("Start", on_click=start)
-    st.button("Stop", on_click=stop)
+#     # Boutons Start et Stop
+#     st.button("Start", on_click=start)
+#     st.button("Stop", on_click=stop)
 
-    # Initialiser la capture vidéo à partir de la webcam
-    cap = cv2.VideoCapture(0)
-    plate_model_path = './models/last.pt'
-    plate_model = YOLO(plate_model_path)
+#     # Initialiser la capture vidéo à partir de la webcam
+#     cap = cv2.VideoCapture(0)
+#     plate_model_path = './models/last.pt'
+#     plate_model = YOLO(plate_model_path)
 
-    # Placeholder pour la vidéo
-    video_placeholder = st.empty()
-    st.markdown(
-        """
-        <h4 style='background-color: #6495ED; color: white; padding: 10px;'>
-            Reconnaissance de Caractères sur la plaque d'immatriculation
-        </h4>
-        """,
-        unsafe_allow_html=True
-    )
+#     # Placeholder pour la vidéo
+#     video_placeholder = st.empty()
+#     st.markdown(
+#         """
+#         <h4 style='background-color: #6495ED; color: white; padding: 10px;'>
+#             Reconnaissance de Caractères sur la plaque d'immatriculation
+#         </h4>
+#         """,
+#         unsafe_allow_html=True
+#     )
 
-    # Boucle pour capturer et traiter chaque image de la webcam
-    while st.session_state.run:
-        ret, frame = cap.read()
-        if not ret:
-            st.error("Erreur lors de la capture de la vidéo.")
-            break
+#     # Boucle pour capturer et traiter chaque image de la webcam
+#     while st.session_state.run:
+#         ret, frame = cap.read()
+#         if not ret:
+#             st.error("Erreur lors de la capture de la vidéo.")
+#             break
 
-        # Détecter et reconnaître les plaques d'immatriculation
-        results = detect_and_recognize_license_plates(frame, plate_model)
+#         # Détecter et reconnaître les plaques d'immatriculation
+#         results = detect_and_recognize_license_plates(frame, plate_model)
 
-        # Si une plaque est détectée, afficher la capture et le texte reconnu dans deux colonnes
-        if results is not None and len(results['license_plate']['text']) >= 8:
-            col1, col2 = st.columns(2)
+#         # Si une plaque est détectée, afficher la capture et le texte reconnu dans deux colonnes
+#         if results is not None and len(results['license_plate']['text']) >= 8:
+#             col1, col2 = st.columns(2)
             
-            with col1:
-                st.image(frame[int(results['license_plate']['bbox'][1]):int(results['license_plate']['bbox'][3]),
-                              int(results['license_plate']['bbox'][0]):int(results['license_plate']['bbox'][2])],
-                         caption="Capture de la plaque détectée",
-                         use_column_width=True)
+#             with col1:
+#                 st.image(frame[int(results['license_plate']['bbox'][1]):int(results['license_plate']['bbox'][3]),
+#                               int(results['license_plate']['bbox'][0]):int(results['license_plate']['bbox'][2])],
+#                          caption="Capture de la plaque détectée",
+#                          use_column_width=True)
             
-            with col2:
-                st.write('Texte de la plaque d\'immatriculation :', results['license_plate']['text'])
+#             with col2:
+#                 st.write('Texte de la plaque d\'immatriculation :', results['license_plate']['text'])
             
-            insert_webcam_detection("webcam_capture.jpg", results['license_plate']['text'])
+#             insert_webcam_detection("webcam_capture.jpg", results['license_plate']['text'])
 
-            # Annoter l'image
-            x1, y1, x2, y2 = results['license_plate']['bbox']
-            cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 0, 255), 4)
-            cv2.putText(frame, results['license_plate']['text'], (int(x1), int(y1) - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 255), 3, cv2.LINE_AA)
+#             # Annoter l'image
+#             x1, y1, x2, y2 = results['license_plate']['bbox']
+#             cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 0, 255), 4)
+#             cv2.putText(frame, results['license_plate']['text'], (int(x1), int(y1) - 10),
+#                         cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 255), 3, cv2.LINE_AA)
 
-        # Afficher la vidéo en direct avec les annotations
-        video_placeholder.image(frame, channels="BGR", use_column_width=True)
+#         # Afficher la vidéo en direct avec les annotations
+#         video_placeholder.image(frame, channels="BGR", use_column_width=True)
 
-        # Attendre un petit moment avant de capturer la prochaine image
-        time.sleep(0.1)
+#         # Attendre un petit moment avant de capturer la prochaine image
+#         time.sleep(0.1)
 
-    # Fermer la capture vidéo et libérer les ressources
-    cap.release()
+#     # Fermer la capture vidéo et libérer les ressources
+#     cap.release()
 
-    # Afficher les détections enregistrées dans la base de données
-    session = SessionLocal()
-    st.title("Tableau des Détections")
-    detectionscam = session.query(WebcamDetection).order_by(desc(WebcamDetection.date)).limit(5).all()
-    data = [
-        {
-            "Numero": detection.id,
-            "Nom de l'image": detection.image_name,
-            "Texte reconnu": detection.recognized_text,
-            "Date": detection.date.strftime('%Y-%m-%d %H:%M:%S')
-        }
-        for detection in detectionscam
-    ]
-    df = pd.DataFrame(data)
-    st.dataframe(df)
-    session.close()
-
-
-
-
-
-
-
-
-
-
-
+#     # Afficher les détections enregistrées dans la base de données
+#     session = SessionLocal()
+#     st.title("Tableau des Détections")
+#     detectionscam = session.query(WebcamDetection).order_by(desc(WebcamDetection.date)).limit(5).all()
+#     data = [
+#         {
+#             "Numero": detection.id,
+#             "Nom de l'image": detection.image_name,
+#             "Texte reconnu": detection.recognized_text,
+#             "Date": detection.date.strftime('%Y-%m-%d %H:%M:%S')
+#         }
+#         for detection in detectionscam
+#     ]
+#     df = pd.DataFrame(data)
+#     st.dataframe(df)
+#     session.close()
 
 # Page pour afficher les résultats enregistrés
 def page_show_detections():
-    st.title("Historiques des Détections webcam")
+     #st.title("Historiques des Détections webcam")
 
     # Afficher les détections de la table WebcamDetection
-    session = SessionLocal()
-    webcam_detections = session.query(WebcamDetection).all()
-    session.close()
+     #session = SessionLocal()
+     #webcam_detections = session.query(WebcamDetection).all()
+     #session.close()
 
-    data_webcam = [
-        {
-            "Numero": webcam_detection.id,
-            "Nom de l'image": webcam_detection.image_name,
-            "Texte reconnu": webcam_detection.recognized_text,
-            "Date": webcam_detection.date.strftime('%Y-%m-%d %H:%M:%S')
-        }
-        for webcam_detection in webcam_detections
-    ]
-    df_webcam = pd.DataFrame(data_webcam)
-    st.dataframe(df_webcam)
+     #data_webcam = [
+      #   {
+      #       "Numero": webcam_detection.id,
+         #    "Nom de l'image": webcam_detection.image_name,
+        #     "Texte reconnu": webcam_detection.recognized_text,
+          #   "Date": webcam_detection.date.strftime('%Y-%m-%d %H:%M:%S')
+        # }
+         #for webcam_detection in webcam_detections
+    # ]
+     #df_webcam = pd.DataFrame(data_webcam)
+     #st.dataframe(df_webcam)
 
     st.title("Historiques des Détections image ")
 
@@ -673,9 +664,6 @@ def page_show_detections():
     ]
     df_video = pd.DataFrame(data_video)
     st.dataframe(df_video)
-
-
-
 #******************************************************************************************
 #*******************************side bar ****************************************************
 # Lancement de l'application
@@ -690,7 +678,7 @@ if __name__ == "__main__":
        
     st.sidebar.title("Menu")
    
-    menu_options = ["Accueil", "Démo Image", "Démo Vidéo","Démo Webcam", "Historiques"]
+    menu_options = ["Accueil", "Démo Image", "Démo Vidéo", "Historiques"]
     selected_menu = st.sidebar.radio("Sélectionnez une option :", menu_options)
 
     if selected_menu == "Accueil":
@@ -699,11 +687,11 @@ if __name__ == "__main__":
         page_demo_image()
     if selected_menu == "Démo Vidéo":
         page_demo_video()
-    if selected_menu == "Démo Webcam":
-        page_demo_webcam()
-    elif selected_menu == "Historiques":
+    # Commenté pour éviter les erreurs
+    # if selected_menu == "Démo Webcam":
+    #     page_demo_webcam()
+    if selected_menu == "Historiques":
         page_show_detections()
-
 
 
 
